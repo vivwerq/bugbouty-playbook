@@ -50,7 +50,7 @@ Always test vulnerabilities only on platforms where you have permission.
 ## How to run Locally
 1) Clone the Repository.
 ```
-[git clone https://github.com/your-username/bug-bounty-manual.git
+git clone https://github.com/your-username/bug-bounty-manual.git
 ```
 ## 🤝 Contributing
 Contributions are welcome!
